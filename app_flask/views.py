@@ -1,8 +1,9 @@
 # -*- encoding=UTF-8 -*-
 from app_flask import app,db
+from qiniusdk import qiniu_upload_file
 from flask import render_template,redirect,request,flash,get_flashed_messages
 from models import Image,User,Comment
-import random,hashlib
+import random,hashlib,uuid,os
 from flask_login import login_user,logout_user,current_user,login_required
 
 @app.route('/')
@@ -87,3 +88,20 @@ def profile(user_id):
         return redirect('/')
     image = Image.query.filter_by(user_id = user_id).order_by(Image.id).paginate(page=1, per_page=3,error_out=False)
     return render_template('profile.html',user=user,images=image.items,has_next=image.has_next)
+
+@app.route('/upload/',methods={'post'})
+@login_required
+def upload():
+    file = request.files['file']
+    file_ext=''
+    if file.filename.find('.') > 0:
+        file_ext = str(file.filename.rsplit('.',1)[1]).strip().lower()
+
+    if file_ext in app.config['ALLOWED_EXT']:
+        file_name = str(uuid.uuid1()).replace('-','') + '.' + file_ext
+        url=qiniu_upload_file(file,file_name)
+        if url != None :
+            db.session.add(Image(url,current_user.id))
+            db.session.commit()
+
+    return redirect('/profile/%d'% current_user.id)
