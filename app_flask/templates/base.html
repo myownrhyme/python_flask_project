@@ -16,7 +16,6 @@
                     <a class="logo" href="/">logo</a>
                     <div class="web-menu">
                         {% if current_user.is_authenticated %}
-
                         <a class="profile-ico" href="/profile/{{current_user.id}}">{{current_user.username}}</a>
                         {% else %}
                         <a class="profile-ico" href="/regloginpage/">登陆/注册</a>

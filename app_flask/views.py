@@ -93,15 +93,14 @@ def profile(user_id):
 @login_required
 def upload():
     file = request.files['file']
-    file_ext=''
-    if file.filename.find('.') > 0:
+    file_ext = ''
+    if file.filename.find('.') > 0 :
         file_ext = str(file.filename.rsplit('.',1)[1]).strip().lower()
-
     if file_ext in app.config['ALLOWED_EXT']:
-        file_name = str(uuid.uuid1()).replace('-','') + '.' + file_ext
-        url=qiniu_upload_file(file,file_name)
-        if url != None :
-            db.session.add(Image(url,current_user.id))
+        file_name = str(uuid.uuid1()).replace('-', '') + '.' + file_ext
+        url = qiniu_upload_file(file, file_name)
+        if url != None:
+            db.session.add(Image(url, current_user.id))
             db.session.commit()
+    return redirect('/profile/%d' % current_user.id)
 
-    return redirect('/profile/%d'% current_user.id)
