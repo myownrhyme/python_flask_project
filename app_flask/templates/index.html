@@ -54,17 +54,18 @@
         </div>
     </article>
     {% endfor %}
+
+    {% if has_next %}
+    <div class="more-content js-load-more">
+                <a class="_oidfu" href="javascript:void(0);">更多</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock%}
 
 {% block js %}
 <script type="text/javascript">
- {% if current_user.is_authenticated %}
-
- {% else %}
-
- {% endif %}
- window.uid = {{user.id}};
+    window.uid = "abc123";
 </script>
 <script type="text/javascript" src="/static/js/jquery.js"></script>
 <script type="text/javascript" src="/static/js/index.js"></script>

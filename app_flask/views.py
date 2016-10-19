@@ -3,13 +3,13 @@ from app_flask import app,db
 from qiniusdk import qiniu_upload_file
 from flask import render_template,redirect,request,flash,get_flashed_messages
 from models import Image,User,Comment
-import random,hashlib,uuid,os
+import random,hashlib,uuid,os,json
 from flask_login import login_user,logout_user,current_user,login_required
 
 @app.route('/')
 def index():
-    image = Image.query.order_by(Image.id).limit(10).all()
-    return render_template('index.html',images=image)
+    image = Image.query.order_by(Image.id).paginate(page=1, per_page=10,error_out=False)
+    return render_template('index.html',images=image.items,has_next=image.has_next)
 
 @app.route('/regloginpage/')
 def regloginpage():
@@ -89,6 +89,20 @@ def profile(user_id):
     image = Image.query.filter_by(user_id = user_id).order_by(Image.id).paginate(page=1, per_page=3,error_out=False)
     return render_template('profile.html',user=user,images=image.items,has_next=image.has_next)
 
+@app.route('/profile/images/<int:user_id>/<int:page>/<int:page_size>/')
+@login_required
+def profile_detail(user_id,page,page_size):
+        paginate=Image.query.filter_by(user_id= user_id).order_by(Image.id).paginate(page=page,per_page=page_size,error_out=False)
+        map = {'has_next':paginate.has_next}
+        images= []
+        for image in paginate.items:
+            imgov = {'id':image.id,'url':image.url,'comment_count':len(image.comments)}
+            images.append(imgov)
+
+        map['images']= images
+        return json.dumps(map)
+
+
 @app.route('/upload/',methods={'post'})
 @login_required
 def upload():
@@ -104,3 +118,12 @@ def upload():
             db.session.commit()
     return redirect('/profile/%d' % current_user.id)
 
+@app.route('/addcomment/', methods={'post'})
+@login_required
+def add_comment():
+    content = request.values['content']
+    image_id = request.values['image_id']
+    comment = Comment(content,image_id,current_user.id)
+    db.session.add(comment)
+    db.session.commit()
+    return json.dumps({'code' : 0,'id' : comment.id,'content':comment.content,'user_name':comment.user.username,'user_id':comment.user.id})
