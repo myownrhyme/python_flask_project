@@ -122,8 +122,8 @@ def upload():
 @login_required
 def add_comment():
     content = request.values['content']
-    image_id = request.values['image_id']
+    image_id = int(request.values['image_id'])
     comment = Comment(content,image_id,current_user.id)
     db.session.add(comment)
     db.session.commit()
-    return json.dumps({'code' : 0,'id' : comment.id,'content':comment.content,'user_name':comment.user.username,'user_id':comment.user.id})
+    return json.dumps({"code" : 0,"id" : comment.id,"content":comment.content,"user_name":comment.user.username,"user_id":comment.user_id})

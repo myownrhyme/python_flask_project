@@ -36,9 +36,10 @@ $(function () {
                 // 清空输入框
                 oCmtIpt.val('');
                 // 渲染新的评论
-                var sHtml = [
-                    '<li>',
-                        '<a class="_4zhc5 _iqaka" title="', that.encode(oResult.username), '" href="/profile/', oResult.user_id, '">', that.encode(oResult.username), '</a> ',
+                var sHtml = ''
+
+                sHtml += ['<li>',
+                        '<a class="_4zhc5 _iqaka" title="', that.encode(oResult.user_name), '" href="/profile/', oResult.user_id, '">', that.encode(oResult.user_name), '</a> ',
                         '<span><span>', that.encode(sCmt), '</span></span>',
                     '</li>'].join('');
                 oListDv.prepend(sHtml);
