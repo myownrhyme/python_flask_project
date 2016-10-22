@@ -6,6 +6,35 @@ from models import Image,User,Comment
 import random,hashlib,uuid,os,json
 from flask_login import login_user,logout_user,current_user,login_required
 
+@app.route('/index/images/<int:page>/<int:page_size>/')
+def index_detail(page,page_size):
+    paginate = Image.query.order_by(Image.id).paginate(page=page, per_page=page_size,
+                                                                                  error_out=False)
+    map = {'has_next': paginate.has_next}
+    images = []
+    for image in paginate.items:
+        comments=[]
+        for i in range(0,min(2,len(image.comments))):
+            comment = image.comments[i]
+            comments.append(
+                {'username':comment.user.username,
+                 'user_id':comment.user_id,
+                 'content':comment.content
+                 }
+            )
+        imgov = {'id': image.id,
+                 'url': image.url,
+                 'user_id': image.user_id,
+                 'image_username':image.user.username,
+                 'comment_count': len(image.comments),
+                 'head_url':image.user.head_url,
+                 'create_date':str(image.create_date),
+                 'comment':comments
+                 }
+        images.append(imgov)
+    map['images'] = images
+    return json.dumps(map)
+
 @app.route('/')
 def index():
     image = Image.query.order_by(Image.id).paginate(page=1, per_page=10,error_out=False)
@@ -65,15 +94,15 @@ def login():
     username = request.values.get('username').strip()
     password = request.values.get('password').strip()
     if username == "" or password == "":
-        return redirect_with_message('/regloginpage', u'用户名密码不能为空', 'reglogin')
+        return redirect_with_message('/regloginpage/', u'用户名密码不能为空', 'reglogin')
 
     user = User.query.filter_by(username=username).first()
     if user == None:
-        redirect_with_message('/regloginpage', u'用户不存在', 'reglogin')
+        redirect_with_message('/regloginpage/', u'用户不存在', 'reglogin')
     m = hashlib.md5()
     m.update(password + user.salt)
     if user.password != m.hexdigest() :
-        return redirect_with_message('/regloginpage', u'密码错误', 'reglogin')
+        return redirect_with_message('/regloginpage/', u'密码错误', 'reglogin')
 
     login_user(user)
     next = request.values.get('next')

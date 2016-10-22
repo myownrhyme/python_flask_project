@@ -73,6 +73,8 @@
 
 .discuss-list {
     margin-bottom: 20px;
+    height: 420px;
+    overflow: auto;
 }
 
 .discuss-list li {

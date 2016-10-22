@@ -2,7 +2,13 @@
 {% block title %}首页{{- current_user.username}}{% endblock%}
 {% block css %}/static/styles/pages/index.css{% endblock%}
 {% block content %}
+<script type="text/javascript">
+    window.uid = "abc123";
+</script>
+<script type="text/javascript" src="/static/js/jquery.js"></script>
+<script type="text/javascript" src="/static/js/index.js"></script>
 <div class="page-main clearfix">
+    <div class="index-load-more">
     {% for image in images%}
     <article class="mod">
         <header class="mod-hd">
@@ -47,26 +53,23 @@
             <section class="discuss-edit">
                 <a class="icon-heart"></a>
                 <form>
-                    <input placeholder="添加评论..." type="text">
+                    <input placeholder="添加评论..." id="jsCmt" type="text">
                 </form>
-                <button class="more-info">更多选项</button>
+                <button class="more-info" id="jsSubmit">更多选项</button>
             </section>
         </div>
     </article>
     {% endfor %}
-
+    </div>
     {% if has_next %}
     <div class="more-content js-load-more">
                 <a class="_oidfu" href="javascript:void(0);">更多</a>
     </div>
     {% endif %}
 </div>
+
 {% endblock%}
 
 {% block js %}
-<script type="text/javascript">
-    window.uid = "abc123";
-</script>
-<script type="text/javascript" src="/static/js/jquery.js"></script>
-<script type="text/javascript" src="/static/js/index.js"></script>
+
 {% endblock%}
