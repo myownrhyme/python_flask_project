@@ -19,7 +19,8 @@ def index_detail(page,page_size):
             comments.append(
                 {'username':comment.user.username,
                  'user_id':comment.user_id,
-                 'content':comment.content
+                 'content':comment.content,
+                 'comment_id':comment.id
                  }
             )
         imgov = {'id': image.id,
@@ -86,7 +87,7 @@ def logout():
 @login_required
 def image(image_id):
     image = Image.query.get(image_id)
-    comment= Comment.query.filter_by(image_id=image_id).all()
+    comment= Comment.query.filter_by(image_id=image_id).order_by(db.desc(Comment.id)).all()
     return render_template('pageDetail.html',image =image,comments=comment)
 
 @app.route('/login/',methods={'post','get'})

@@ -3,7 +3,11 @@
 {% block css %}/static/styles/pages/index.css{% endblock%}
 {% block content %}
 <script type="text/javascript">
-    window.uid = "abc123";
+    {% if current_user.is_authenticated%}
+        window.uid = {{ current_user.id}};
+    {% else %}
+        windows.uid="oscar"
+    {% endif %}
 </script>
 <script type="text/javascript" src="/static/js/jquery.js"></script>
 <script type="text/javascript" src="/static/js/index.js"></script>
@@ -53,7 +57,7 @@
             <section class="discuss-edit">
                 <a class="icon-heart"></a>
                 <form>
-                    <input placeholder="添加评论..." id="jsCmt" type="text">
+                    <input placeholder="添加评论..." id="jsCmt"  type="text" myAttr="{{image.id}}">
                 </form>
                 <button class="more-info" id="jsSubmit">更多选项</button>
             </section>
