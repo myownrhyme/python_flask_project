@@ -6,7 +6,7 @@
     {% if current_user.is_authenticated%}
         window.uid = {{ current_user.id}};
     {% else %}
-        windows.uid="oscar"
+        window.uid="oscar"
     {% endif %}
 </script>
 <script type="text/javascript" src="/static/js/jquery.js"></script>
@@ -14,7 +14,7 @@
 <div class="page-main clearfix">
     <div class="index-load-more">
     {% for image in images%}
-    <article class="mod">
+    <article class="mod" id="{{image.id}}">
         <header class="mod-hd">
             <time class="time">{{image.created_date}}</time>
             <a href="/profile/{{image.user.id}}" class="avatar">
@@ -57,7 +57,7 @@
             <section class="discuss-edit">
                 <a class="icon-heart"></a>
                 <form>
-                    <input placeholder="添加评论..." id="jsCmt"  type="text" myAttr="{{image.id}}">
+                    <input placeholder="添加评论..." id="jsCmt"  type="text">
                 </form>
                 <button class="more-info" id="jsSubmit">更多选项</button>
             </section>
